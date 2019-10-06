@@ -15,7 +15,9 @@ class App extends Component {
       { name: 'Frank', age: 35},
       { name: 'Yuri', age: 58},
       { name: 'Mattew', age: 25},
-    ]
+    ], 
+    otherSetState: 'some other value',
+    showPerson: false,
   }
   switchNameHandler = (newName) => {
     console.log("click was cliecked")
@@ -38,33 +40,60 @@ class App extends Component {
       ]
     })
   }
+
+  togglePersonHandler = () => {
+    const doesShow = this.state.showPerson;
+    //** if doesShow is TRUE  set  showPerson to FALSE  
+    //** if doesShow is FALSE set  showPerson to TRUE 
+    this.setState({showPerson: !doesShow})  
+  }
+
+  deletePersonHandler = (personIndex) => {
+    const persons = [...this.state.persons];
+    console.log(persons)
+    persons.splice(personIndex, 1)
+  }
+
+
   render() {
+    // How to render with conditional logic ***PAY ATTENTION TO THE VARIABLE persons***
+    let persons = null;
+    if (this.state.showPerson) {
+      persons = (
+      <div>
+        {this.state.persons.map((person, index) => {
+          return <Person 
+          click= {() => this.deletePersonHandler(index)}
+          name={person.name} 
+          age={person.age}/>
+        })}
+
+          {/* <Person 
+            name={this.state.persons[0].name} 
+            age={this.state.persons[0].age}/>
+          <Person 
+            name={this.state.persons[1].name} 
+            age={this.state.persons[1].age}
+            click={this.switchNameHandler.bind(this, 'Alberto!')}
+            changed={this.nameChanged}>My Hobbies: tennis
+          </Person>
+          <Person 
+            name={this.state.persons[2].name} 
+            age={this.state.persons[2].age}/> */}
+        </div>
+      )
+    }
     return (
       <div className="App">
-       <h1>Hi Hello I am Alberto</h1>
-       <p>This is working</p>
-       <button onClick={() => this.switchNameHandler('Alberto')}>Switch Name</button>  
-        <Person 
-          name={this.state.persons[0].name} 
-          age={this.state.persons[0].age}/>
-        <Person 
-          name={this.state.persons[1].name} 
-          age={this.state.persons[1].age}
-          click={this.switchNameHandler.bind(this, 'Alberto!')}
-          changed={this.nameChanged}>My Hobbies: tennis
-        </Person>
-        <Person 
-          name={this.state.persons[2].name} 
-          age={this.state.persons[2].age}/>
-     </div> 
+        <h1>Hi Hello I am Alberto</h1>
+        <p>This is working</p>
+        <button onClick={this.togglePersonHandler}>Toggle Persone</button>  
+        {persons}
+      </div> 
      // <h1>Hi Hello I am Alberto</h1> --> in jsx we cannot do this we cannot render an element standalone, there must ONE root element that wrap anothers elements
    );
   }
- 
-  // The following code is the code that gets compile when we write code as the above. The following line 
-  // is one reason that explain why is important to import React from 'react'
-    
-  // **** return React.createElement('div', {className: }, React.createElement('h1', null, 'Hi Hello I am Alberto')) ******
+  
 }
 
 export default App;
