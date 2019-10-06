@@ -12,9 +12,9 @@ class App extends Component {
   // state can be changed. If it changes lead React to  update the DOM
   state = {
     persons: [
-      { name: 'Frank', age: 35},
-      { name: 'Yuri', age: 58},
-      { name: 'Mattew', age: 25},
+      { id: '1',name: 'Frank', age: 35},
+      { id: '2',name: 'Yuri', age: 58},
+      { id: '3',name: 'Mattew', age: 25},
     ], 
     otherSetState: 'some other value',
     showPerson: false,
@@ -24,14 +24,26 @@ class App extends Component {
     // ---> DO NOT DO THIS:  this.state.persons[0].name = 'Alberto'   
     this.setState({
       persons: [
-        { name: newName, age: 26},
-        { name: 'Yuri', age: 58},
-        { name: 'Mattew', age: 25},
+        {  name: newName, age: 26},
+        {  name: 'Yuri', age: 58},
+        {  name: 'Mattew', age: 25},
       ]
     })
   }
 
-  nameChanged = (event) =>{
+  nameChangedHandler = (event, id) =>{
+    const personIndex = this.state.persons.findIndex( p => {
+      return p.id === id
+    })
+
+
+    // Create a new object 
+    const person = {
+      ...this.state.persons[personIndex]
+    }
+
+    person.name = event.target.value;
+
     this.setState({
       persons: [
         { name: 'Frank', age: 26},
@@ -49,11 +61,22 @@ class App extends Component {
   }
 
   deletePersonHandler = (personIndex) => {
-    const persons = [...this.state.persons];
-    console.log(persons)
-    persons.splice(personIndex, 1);
-    this.setState({persons:persons})
-  }
+    // Immutable  -- make a shallow copy of the of the original state
+     const persons = [...this.state.persons];
+     console.log('Immutable ...persons',persons)
+     persons.splice(personIndex, 1);
+     console.log('Immutable ater splicing ', persons)
+     this.setState({persons:persons})
+     console.log('this state Immutable ',this.state)
+
+    // Mutable -- passing the reference of the original state  ---> DO NOT DO THIS
+    //  const persons = this.state.persons;
+    //  console.log('...persons',persons)
+    //  persons.splice(personIndex, 1);
+    //  console.log('ater splicing ', persons)
+    //  this.setState({persons:persons})
+    //  console.log('this state',this.state)
+  } 
 
 
   render() {
@@ -66,7 +89,9 @@ class App extends Component {
           return <Person 
           click= {() => this.deletePersonHandler(index)}
           name={person.name} 
-          age={person.age}/>
+          age={person.age}
+          key={person.id}
+          changed={(event) => this.nameChangedHandler(event, person.id)}/>
         })}
 
           {/* <Person 
@@ -76,7 +101,7 @@ class App extends Component {
             name={this.state.persons[1].name} 
             age={this.state.persons[1].age}
             click={this.switchNameHandler.bind(this, 'Alberto!')}
-            changed={this.nameChanged}>My Hobbies: tennis
+            changed={this.nameChangedHandler}>My Hobbies: tennis
           </Person>
           <Person 
             name={this.state.persons[2].name} 
@@ -91,7 +116,7 @@ class App extends Component {
         <button onClick={this.togglePersonHandler}>Toggle Persone</button>  
         {persons}
       </div> 
-     // <h1>Hi Hello I am Alberto</h1> --> in jsx we cannot do this we cannot render an element standalone, there must ONE root element that wrap anothers elements
+     // <h1>Hi Hello I am Alberto</h1> --> in jsx we cannot do this, we cannot render an element standalone, there must ONE root element that wrap anothers elements
    );
   }
   
